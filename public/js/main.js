@@ -7,9 +7,9 @@ var gCanvas = document.getElementById("gCanvas");
 var CANVAS_WIDTH = gCanvas.width;
 var CANVAS_HEIGHT = gCanvas.height;
 var NODESIZE = 20;
-
-var openSet = new Set();
-var closedSet = new Set();
+var path; // where we store the path
+var openSet = new Set(); //nodes which have yet to be checked
+var closedSet = new Set(); //nodes which have been checked.
 var gridPointsByPos = [];
 var gridPoints = [];
 
@@ -50,7 +50,7 @@ class Node{
         var parent;
         this.getGCost = this.getValueG;
         this.getHCost = this.getValueH;
-
+        this.inPath = false;
         this.size = size;
         this.posx=posx;
         this.posy=posy;
@@ -121,13 +121,23 @@ class Node{
         gctx.stroke();
     }
     drawClosedNode(){
-        console.log("drawing");
+
         gctx.beginPath();
         gctx.lineWidth = "2";
         gctx.strokeStyle = "black";
         gctx.fillStyle = "pink";
         gctx.fillRect(this.posx, this.posy, this.size, this.size);
         gctx.rect(this.posx, this.posy, this.size, this.size);
+        gctx.closePath();
+        gctx.stroke();
+    }
+    drawPath(){
+        gctx.beginPath();
+        gctx.lineWidth = "2";
+        gctx.strokeStyle = "black";
+        gctx.fillStyle = "purple";
+        gctx.fillRect(this.posx, this.posy, this.size, this.size);
+        gctx.rect(this.posx,this.posy, this.size, this.size);
         gctx.closePath();
         gctx.stroke();
     }
@@ -141,7 +151,9 @@ class Node{
         gctx.rect(this.posx, this.posy, this.size, this.size);
         gctx.closePath();
         gctx.stroke();
-
+        if (this.inPath === true){
+            this.drawPath();
+        }
         if(this.walkable === false)
         {
 
@@ -229,7 +241,7 @@ class PathFindingAlg{
             }
 
             if (currentNode.id  == endNode.id){
-
+                retracePath(startNode, endNode);
                 console.log("it works!");
                 return; //exits loop
             }
@@ -317,7 +329,7 @@ class Grid{
                     //here's the problem , need to set the walkability of the node without always being true...
                     tempNode = new Node(countNodes, NODESIZE,i,j, true);
                     if (countNodes === 53 || countNodes === 93 || countNodes === 133 || countNodes === 173 || countNodes === 213 || countNodes === 253 || countNodes === 293 || countNodes === 333) {
-                        tempNode.toggleWalkable()
+                        tempNode.toggleWalkable();
                         if (wallSet.has(countNodes)){
                                 tempNode.walkable = false;
                         }
@@ -422,6 +434,23 @@ document.getElementById('debug').addEventListener("click", function(event){
    mode = "debug";
 });
 
+function retracePath(startNode, endNode){
+   path = new Set();
+    var currentNode = endNode;
+    var reverseArray;
+    while (currentNode != startNode){
+        path.add(currentNode);
+        currentNode = currentNode.parent;
+        currentNode.inPath = true;
+        currentNode.drawPath();
+        }
+
+    reverseArray = Array.from(path);
+
+    reverseArray.reverse();
+    path = new Set(reverseArray);
+
+}
 
 
 gCanvas.addEventListener('click', function(event){
