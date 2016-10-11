@@ -10,7 +10,7 @@ var CANVAS_WIDTH = gCanvas.width;
 var CANVAS_HEIGHT = gCanvas.height;
 var NODESIZE = 20;
 
-//Sets to keep our Nodes straight.
+
 var path;
 
 var openSet = new Set();
@@ -20,9 +20,9 @@ var gridPoints = [];
 
 var wallSet = new Set;
 
+//used to store the start and endPoint during resets, etc. 
 var startPoint;
 var endPoint;
-
 
 var mode = null;
 
@@ -33,21 +33,10 @@ class Vec2 {
         this.y = y;
     }
 }
-function nodeDrawer(context, target, lineW, strokeS, fillS){
-    context.beginPath();
-    context.lineWidth = lineW;
-    context.strokeStyle = strokeS;
-    context.fillStyle = fillS;
-    context.fillRect(target.posx, target.posy, target.size, target.size);
-    context.rect(target.posx, target.posy, target.size, target.size);
-    context.closePath();
-    context.stroke();
-}
+
 
 gCanvasOffset = new Vec2(gCanvas.offsetLeft, gCanvas.offsetTop);
 
-var startPointId;
-var endPointId;
 
 startPoint = new Vec2(40, 80);
 endPoint = new Vec2(100, 400);
@@ -71,11 +60,11 @@ class Node {
     }
 
     createStartNode() {
-        nodeDrawer(gctx,this, 2, "black", "blue");
+        nodeDrawer(gctx, this, 2, "black", "blue");
 
     }
     createEndNode() {
-        nodeDrawer(gctx,this, 2, "black", "red");
+        nodeDrawer(gctx, this, 2, "black", "red");
 
     }
     toggleWalkable() {
@@ -104,18 +93,18 @@ class Node {
         return (getDistance(this, startPointPosition));
     }
     createWall() {
-        nodeDrawer(gctx,this, 2, "black", "black");
+        nodeDrawer(gctx, this, 2, "black", "black");
 
     }
     drawOpenNode() {
-        nodeDrawer(gctx,this, 2, "black", "green");
+        nodeDrawer(gctx, this, 2, "black", "green");
 
     }
     drawClosedNode() {
-        nodeDrawer(gctx,this, 2, "black", "pink");
-          }
+        nodeDrawer(gctx, this, 2, "black", "pink");
+    }
     drawPath() {
-        nodeDrawer(gctx,this, 2, "black", "purple");
+        nodeDrawer(gctx, this, 2, "black", "purple");
     }
     drawNode() {
 
@@ -299,11 +288,11 @@ class Grid {
     }
 }
 //the grid will be the exact size of the canvas
-//the top left corner will be located at point 0,0 to fill the canvas
+//the top left corner of the grid will be located at point 0,0 to fill the canvas
 var grid = new Grid(CANVAS_WIDTH, CANVAS_HEIGHT, 0, 0);
-
 grid.createGrid();
 
+var myPath = new PathFindingAlg(grid, startPoint, endPoint);
 //distance from a node to  another node
 function getDistance(nodeA, nodeB) {
     var distX = Math.abs(nodeA.posx - nodeB.posx);
@@ -324,7 +313,7 @@ function retracePath(startNode, endNode) {
         path.add(currentNode);
         currentNode = currentNode.parent;
         currentNode.inPath = true;
-        if(currentNode != startNode)
+        if (currentNode != startNode)
             currentNode.drawPath();
     }
 
@@ -360,10 +349,22 @@ function getNeighbors(node) {
 
 }
 
-var myPath = new PathFindingAlg(grid, startPoint, endPoint);
+
 
 //UI, buttons, and click events/functions
 
+//tells canvas to how to draw the node
+function nodeDrawer(context, target, lineW, strokeS, fillS) {
+    context.beginPath();
+    context.lineWidth = lineW;
+    context.strokeStyle = strokeS;
+    context.fillStyle = fillS;
+    context.fillRect(target.posx, target.posy, target.size, target.size);
+    context.rect(target.posx, target.posy, target.size, target.size);
+    context.closePath();
+    context.stroke();
+}
+//clears the path WITHOUT clearing the walls
 function reset() {
     gridPoints = []; // resets the gridPoints so that it clears the walls etc. on reset.
     gridPointsByPos = [];
@@ -372,14 +373,15 @@ function reset() {
     gctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     grid.createGrid();
 
-
 }
-function resetWalls(){
+//resets everything INCLUDING walls
+function resetWalls() {
 
     wallSet.clear();
     reset();
 }
 
+//creates the button functions 
 document.getElementById("btnReset").addEventListener("click", function(event) {
     reset();
 });
@@ -392,17 +394,17 @@ document.getElementById("btnEndPoint").addEventListener("click", function(event)
 document.getElementById("btnWall").addEventListener("click", function(event) {
     mode = "wall";
 });
-document.getElementById("wallReset").addEventListener("click", function(event){
+document.getElementById("wallReset").addEventListener("click", function(event) {
     resetWalls();
 })
 document.getElementById("btnBeginPathFind").addEventListener("click", function(event) {
-
+    reset();
     myPath = new PathFindingAlg(grid, startPoint, endPoint);
     myPath.findPath();
 });
-
+//tells the canvas what to do when clicked 
 gCanvas.addEventListener('click', function(event) {
-    var x = event.pageX- $(gCanvas).position().left;
+    var x = event.pageX - $(gCanvas).position().left;
     var y = event.pageY - $(gCanvas).position().top;
 
     gridPoints.forEach(function(element) {
