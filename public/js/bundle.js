@@ -33,6 +33,16 @@ class Vec2 {
         this.y = y;
     }
 }
+function nodeDrawer(context, target, lineW, strokeS, fillS){
+    context.beginPath();
+    context.lineWidth = lineW;
+    context.strokeStyle = strokeS;
+    context.fillStyle = fillS;
+    context.fillRect(target.posx, target.posy, target.size, target.size);
+    context.rect(target.posx, target.posy, target.size, target.size);
+    context.closePath();
+    context.stroke();
+}
 
 gCanvasOffset = new Vec2(gCanvas.offsetLeft, gCanvas.offsetTop);
 
@@ -61,24 +71,12 @@ class Node {
     }
 
     createStartNode() {
-        gctx.beginPath();
-        gctx.lineWidth = "2";
-        gctx.strokeStyle = "black";
-        gctx.fillStyle = "blue";
-        gctx.fillRect(this.posx, this.posy, this.size, this.size);
-        gctx.rect(this.posx, this.posy, this.size, this.size);
-        gctx.closePath();
-        gctx.stroke();
+        nodeDrawer(gctx,this, 2, "black", "blue");
+
     }
     createEndNode() {
-        gctx.beginPath();
-        gctx.lineWidth = "2";
-        gctx.strokeStyle = "black";
-        gctx.fillStyle = "red";
-        gctx.fillRect(this.posx, this.posy, this.size, this.size);
-        gctx.rect(this.posx, this.posy, this.size, this.size);
-        gctx.closePath();
-        gctx.stroke();
+        nodeDrawer(gctx,this, 2, "black", "red");
+
     }
     toggleWalkable() {
         this.walkable = !this.walkable;
@@ -106,45 +104,18 @@ class Node {
         return (getDistance(this, startPointPosition));
     }
     createWall() {
-        gctx.beginPath();
-        gctx.lineWidth = "2";
-        gctx.strokeStyle = "black";
-        gctx.fillStyle = "black";
-        gctx.fillRect(this.posx, this.posy, this.size, this.size);
-        gctx.rect(this.posx, this.posy, this.size, this.size);
-        gctx.closePath();
-        gctx.stroke();
+        nodeDrawer(gctx,this, 2, "black", "black");
+
     }
     drawOpenNode() {
-        gctx.beginPath();
-        gctx.lineWidth = "2";
-        gctx.strokeStyle = "black";
-        gctx.fillStyle = "green";
-        gctx.fillRect(this.posx, this.posy, this.size, this.size);
-        gctx.rect(this.posx, this.posy, this.size, this.size);
-        gctx.closePath();
-        gctx.stroke();
+        nodeDrawer(gctx,this, 2, "black", "green");
+
     }
     drawClosedNode() {
-
-        gctx.beginPath();
-        gctx.lineWidth = "2";
-        gctx.strokeStyle = "black";
-        gctx.fillStyle = "pink";
-        gctx.fillRect(this.posx, this.posy, this.size, this.size);
-        gctx.rect(this.posx, this.posy, this.size, this.size);
-        gctx.closePath();
-        gctx.stroke();
-    }
+        nodeDrawer(gctx,this, 2, "black", "pink");
+          }
     drawPath() {
-        gctx.beginPath();
-        gctx.lineWidth = "2";
-        gctx.strokeStyle = "black";
-        gctx.fillStyle = "purple";
-        gctx.fillRect(this.posx, this.posy, this.size, this.size);
-        gctx.rect(this.posx, this.posy, this.size, this.size);
-        gctx.closePath();
-        gctx.stroke();
+        nodeDrawer(gctx,this, 2, "black", "purple");
     }
     drawNode() {
 
